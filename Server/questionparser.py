@@ -1,36 +1,10 @@
 import ahocorasick
 import os
+import medicalconst as mc
 
 
 class QuestionParser:
     def __init__(self) -> None:
-        # const entity types
-        self.DISEASE = 'disease'
-        self.SYMPTOM = 'symptom'
-        self.DEPARTMENT = 'department'
-        self.CHECK = 'check'
-        self.FOOD = 'food'
-        self.DRUG = 'drug'
-        self.PRODUCER = 'producer'
-        # const question types
-        self.SYMP_DISE = 'symptom_disease'
-        self.DISE_SYMP = 'disease_symptom'
-        self.DISE_DEPART = 'disease_department'
-        self.DISE_CHECK = 'disease_check'
-        self.CHECK_DISE = 'check_disease'
-        self.DISE_CAUSE = 'disease_cause'
-        self.DISE_DO_FOOD = 'disease_do_food'
-        self.DISE_NOT_FOOD = 'disease_not_food'
-        self.DISE_DRUG = 'disease_drug'
-        self.DRUG_DISE = 'drug_disease'
-        self.DISE_CUREWAY = 'disease_cureway'
-        self.DISE_CUREPROB = 'disease_cureprob'
-        self.DISE_CURE = 'disease_cure'
-        self.DISE_COMP = 'disease_complication'
-        self.DISE_PREV = 'disease_prevent'
-        self.DISE_DURA = 'disease_duration'
-        self.DISE_EASY = 'disease_easyget'
-
         # the prefix path of entity data
         self.prefix_path = '/'.join(os.path.abspath(__file__).split('/')[:-2])
         self.prefix_path = os.path.join(self.prefix_path, 'KnowledgeGraph/data')
@@ -71,7 +45,7 @@ class QuestionParser:
         self.qwds_check = ['检查', '怎么查', '查什么', '查出', '测出']
         self.qwds_food = ['吃什么', '食物', '要吃', '不能吃', '忌口', '菜', '膳食', '不要吃', '吃的', '食疗', '保健品', '饮食', '食品', '吃', 
             '喝', '食', '补', '营养', '补充', '菜谱', '饮用']
-        self.qwds_drug = ['药', '药品', '药片', '处方', '药方', '用药', '胶囊', '口服液']
+        self.qwds_drug = ['药', '药品', '药片', '处方', '药方', '用药', '胶囊', '口服液', '吃什么药']
         self.qwds_producer = ['生产商', '厂商', '牌子', '厂', '品牌', '牌', '出品']
         self.qwds_cureway = ['怎么治疗', '如何治疗', '怎么治', '怎么医', '怎么医治', '如何医治', '怎么治愈', '如何治愈', '如何治','如何医', 
             '怎么办', '咋办', '咋治', '疗法']
@@ -116,19 +90,19 @@ class QuestionParser:
         for word in wordlist:
             wordtype_dict[word] = []
             if word in self.words_disease:
-                wordtype_dict[word].append(self.DISEASE)
+                wordtype_dict[word].append(mc.DISEASE)
             if word in self.words_symptom:
-                wordtype_dict[word].append(self.SYMPTOM)
+                wordtype_dict[word].append(mc.SYMPTOM)
             if word in self.words_department:
-                wordtype_dict[word].append(self.DEPARTMENT)
+                wordtype_dict[word].append(mc.DEPARTMENT)
             if word in self.words_check:
-                wordtype_dict[word].append(self.CHECK)
+                wordtype_dict[word].append(mc.CHECK)
             if word in self.words_food:
-                wordtype_dict[word].append(self.FOOD)
+                wordtype_dict[word].append(mc.FOOD)
             if word in self.words_drug:
-                wordtype_dict[word].append(self.DRUG)
+                wordtype_dict[word].append(mc.DRUG)
             if word in self.words_producer:
-                wordtype_dict[word].append(self.PRODUCER)
+                wordtype_dict[word].append(mc.PRODUCER)
         return wordtype_dict
 
     '''check whether the words exist in question'''
@@ -139,7 +113,7 @@ class QuestionParser:
         return False
 
     '''the main function to parse the question'''
-    def main_parser(self, question):
+    def parse_question(self, question):
         question_meta = {}
         question_entity_type = self.get_question_entity_type(question)
         if question_entity_type == {}:
@@ -153,72 +127,73 @@ class QuestionParser:
         # the type of question, based on the entities types of question and the question keywords
         question_types = []
         # symptom
-        if self.check_words(self.qwds_symptom, question) and self.DISEASE in types:
-            question_types.append(self.DISE_SYMP)
-        if self.check_words(self.qwds_symptom, question) and self.SYMPTOM in types:
-            question_types.append(self.SYMP_DISE)
+        if self.check_words(self.qwds_symptom, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_SYMP)
+        if self.check_words(self.qwds_symptom, question) and mc.SYMPTOM in types:
+            question_types.append(mc.SYMP_DISE)
         
         # department
-        if self.check_words(self.qwds_department, question) and self.DISEASE in types:
-            question_types.append(self.DISE_DEPART)
+        if self.check_words(self.qwds_department, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_DEPART)
         
         # cause
-        if self.check_words(self.qwds_cause, question) and self.DISEASE in types:
-            question_types.append(self.DISE_CAUSE)
+        if self.check_words(self.qwds_cause, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_CAUSE)
 
         # check
-        if self.check_words(self.qwds_check, question) and self.DISEASE in types:
-            question_types.append(self.DISE_CHECK)
-        if self.check_words(self.qwds_check, question) and self.CHECK in types:
-            question_types.append(self.CHECK_DISE)
+        if self.check_words(self.qwds_check, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_CHECK)
+        if self.check_words(self.qwds_check, question) and mc.CHECK in types:
+            question_types.append(mc.CHECK_DISE)
         
         # food
-        if self.check_words(self.qwds_food, question) and self.DISEASE in types:
+        if self.check_words(self.qwds_food, question) and mc.DISEASE in types:
             deny_status = self.check_words(self.deny_words, question)
             if deny_status:
-                question_types.append(self.DISE_NOT_FOOD)
+                question_types.append(mc.DISE_NOT_FOOD)
             else:
-                question_types.append(self.DISE_DO_FOOD)
+                question_types.append(mc.DISE_DO_FOOD)
 
         # drug
-        if self.check_words(self.qwds_drug, question) and self.DISEASE in types:
-            question_types.append(self.DISE_DRUG)
-        if self.check_words(self.qwds_drug, question) and self.DRUG in types:
-            question_types.append(self.DRUG_DISE)
+        if self.check_words(self.qwds_drug, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_DRUG)
 
         # complication
-        if self.check_words(self.qwds_complication, question) and self.DISEASE in types:
-            question_types.append(self.DISE_COMP)
+        if self.check_words(self.qwds_complication, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_COMP)
 
         # cure probbility
-        if self.check_words(self.qwds_curepro, question) and self.DISEASE in types:
-            question_types.append(self.DISE_CUREPROB)
+        if self.check_words(self.qwds_curepro, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_CUREPROB)
 
         # cure way
-        if self.check_words(self.qwds_cureway, question) and self.DISEASE in types:
-            question_types.append(self.DISE_CUREWAY)
+        if self.check_words(self.qwds_cureway, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_CUREWAY)
 
-        # cure
-        if self.check_words(self.qwds_cure, question) and self.DRUG in types:
-            question_types.append(self.DRUG_DISE)
+        # drug -> disease
+        if self.check_words(self.qwds_cure, question) and mc.DRUG in types:
+            question_types.append(mc.DRUG_DISE)
 
         # duration
-        if self.check_words(self.qwds_duration, question) and self.DISEASE in types:
-            question_types.append(self.DISE_DURA)
+        if self.check_words(self.qwds_duration, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_DURA)
 
         # prevent
-        if self.check_words(self.qwds_prevent, question) and self.DISEASE in types:
-            question_types.append(self.DISE_PREV)
+        if self.check_words(self.qwds_prevent, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_PREV)
 
         # easy get
-        if self.check_words(self.qwds_easyget, question) and self.DISEASE in types:
-            question_types.append(self.DISE_EASY)
+        if self.check_words(self.qwds_easyget, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_EASY)
 
         # if the question_types is empty
-        if question_types is [] and self.DISEASE in types:
-            question_types.append(self.DISE_DESC)
-        if question_types is [] and self.SYMPTOM in types:
-            question_types.append(self.SYMP_DISE)
+        if question_types is [] and mc.DISEASE in types:
+            question_types.append(mc.DISE_DESC)
+        elif question_types is [] and mc.SYMPTOM in types:
+            question_types.append(mc.SYMP_DISE)
+        elif question_types is [] and mc.DRUG in types:
+            question_types.append(mc.DRUG_DISE)
+
 
         question_meta['question_types'] = list(set(question_types))
         return question_meta
