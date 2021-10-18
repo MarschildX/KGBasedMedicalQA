@@ -49,7 +49,7 @@ class AnswerBuilder:
             result = [a['n.name'] for a in answer]
             object = list(set([a['m.name'] for a in answer]))
             object_str = '、'.join(object)
-            formatting_answer = '如果患了{0}建议做如下的检查：{1}。'.format(object_str, '，'.join(list(set(result))))
+            formatting_answer = '建议做如下的检查：{0}。'.format('，'.join(list(set(result))))
         elif ques_type == mc.CHECK_DISE:
             result = [a['m.name'] for a in answer]
             object = list(set([a['n.name'] for a in answer]))
@@ -74,8 +74,8 @@ class AnswerBuilder:
             result = [a['n.name'] for a in answer]
             object = list(set([a['m.name'] for a in answer]))
             object_str = '、'.join(object)
-            formatting_answer = '本建议仅供参考，{0}等药品对{1}有治疗作用，具体用药切记遵从医嘱。'.format(object_str,
-                 '，'.join(list(set(result))))
+            formatting_answer = '本建议仅供参考，{0}等药品对{1}有治疗作用，具体用药切记遵从医嘱。'.format(
+                 '，'.join(list(set(result))), object_str)
         elif ques_type == mc.DRUG_DISE:
             result = [a['m.name'] for a in answer]
             object = list(set([a['n.name'] for a in answer]))
@@ -112,10 +112,10 @@ class AnswerBuilder:
             object = list(set([a['m.name'] for a in answer]))
             object_str = '、'.join(object)
             formatting_answer = '{0}的易感人群：{1}。'.format(object_str, '，'.join(result))
-        elif ques_type == mc.DISE_COMP:
+        elif ques_type == mc.DISE_DESC:
             result = [a['m.desc'] for a in answer]
             object = list(set([a['m.name'] for a in answer]))
             object_str = '、'.join(object)
-            formatting_answer = '{0}简介：\n{1}。'.format(object_str, '，'.join(result))
+            formatting_answer = '{0}'.format('，'.join(result))
         return formatting_answer
 

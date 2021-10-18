@@ -13,7 +13,8 @@ while True:
     question_json = json.dumps({'question': question})
     response = requests.post(url=qa_url, headers=headers, data=question_json)
     answers = response.json()['answers']
+    print('\033[32manswer:\033[0m')
     for ans in answers:
         if ans.strip():
-            print('\033[32manswer:\033[0m', ans.strip())
+            print(ans.strip())
 

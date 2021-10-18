@@ -1,6 +1,7 @@
 import ahocorasick
 import os
 import medicalconst as mc
+import json
 
 
 class QuestionParser:
@@ -17,6 +18,7 @@ class QuestionParser:
         self.path_food = os.path.join(self.prefix_path, 'food.txt')
         self.path_drug = os.path.join(self.prefix_path, 'drug.txt')
         self.path_producer = os.path.join(self.prefix_path, 'producer.txt')
+        self.path_question_words = os.path.join(self.prefix_path, 'question_words.json')
 
         # load the entity data
         self.words_disease = [entity.strip() for entity in open(self.path_disease) if entity.strip()]
@@ -34,30 +36,24 @@ class QuestionParser:
         # the medical word type dictionary
         self.wordtype_dict = self.construct_wordtype_dict(self.words_all)
 
-        # question key words
-        self.deny_words = ['否', '非', '不', '无', '弗', '勿', '毋', '未', '没', '莫', '没有', '防止', '不再', '不会', 
-            '不能', '忌', '禁止', '防止', '难以', '忘记', '忽视', '放弃', '拒绝', '杜绝', '不是', '并未', '并无', '仍未', 
-            '难以出现', '切勿', '不要', '不可', '别', '管住', '注意', '小心', '少']
-        self.qwds_symptom = ['表征', '症状', '表现','现象', '症候', '特点']
-        self.qwds_department = ['科室', '属于', '哪个科', '属什么科', '属于什么科', '哪个科负责', '什么科负责', '哪个科室负责', '什么科室负责']
-        self.qwds_cause = ['病因', '由什么引起', '原因', '怎么得的', '为什么会得', '如何引起', '为何', '为啥', '为什么', '成因', '为何得', 
-            '怎么得', '导致', '造成', '怎么会']
-        self.qwds_check = ['检查', '怎么查', '查什么', '查出', '测出']
-        self.qwds_food = ['吃什么', '食物', '要吃', '不能吃', '忌口', '菜', '膳食', '不要吃', '吃的', '食疗', '保健品', '饮食', '食品', '吃', 
-            '喝', '食', '补', '营养', '补充', '菜谱', '饮用']
-        self.qwds_drug = ['药', '药品', '药片', '处方', '药方', '用药', '胶囊', '口服液', '吃什么药']
-        self.qwds_producer = ['生产商', '厂商', '牌子', '厂', '品牌', '牌', '出品']
-        self.qwds_cureway = ['怎么治疗', '如何治疗', '怎么治', '怎么医', '怎么医治', '如何医治', '怎么治愈', '如何治愈', '如何治','如何医', 
-            '怎么办', '咋办', '咋治', '疗法']
-        self.qwds_curepro = ['概率有多大', '几率有多大', '多大概率', '多大几率', '治愈率', '概率有多少', '多少概率', '多少几率', '几率有多少', 
-            '概率', '几率', '希望有多少', '有多大希望', '希望有多大', '希望', '几成', '比例', '可能性']
-        self.qwds_complication = ['并发症', '一起发生', '并发', '一并发生', '共同症状', '共同发生', '伴随', '一同出现', '共现']
-        self.qwds_prevent = ['预防', '怎么预防', '如何预防', '防止', '如何防止', '怎么防止', '远离', '怎么远离', '如何远离', '避免', '怎么避免', 
-            '如何避免', '怎样才不', '怎样才能不', '如何才能不', '如何才不', '防范']
-        self.qwds_duration = ['几天痊愈', '持续多久', '几天才能痊愈', '几天才能好', '多久能好', '多久才能好', '多久痊愈', '多久能痊愈', 
-            '多久才能痊愈', '多久', '周期', '持续多长时间', '几年', '几天', '几个小时']
-        self.qwds_easyget = ['什么人容易得', '易得', '易患', '易感人群', '什么人', '哪些人', '容易感染', '容易染上', '易感染', '易染上', '容易得']
-        self.qwds_cure = ['治什么', '治疗什么', '治哪些', '治疗哪些', '治疗啥', '医治啥', '治啥', '有什么用', '有啥用', '用处', '用途']
+        # question words
+        with open(self.path_question_words, 'r') as fjson:
+            question_words = json.load(fjson)
+        self.deny_words = question_words['deny_words']
+        self.qwds_symptom = question_words['qwds_symptom']
+        self.qwds_department = question_words['qwds_department']
+        self.qwds_cause = question_words['qwds_cause']
+        self.qwds_check = question_words['qwds_check']
+        self.qwds_food = question_words['qwds_food']
+        self.qwds_drug = question_words['qwds_drug']
+        self.qwds_producer = question_words['qwds_producer']
+        self.qwds_cureway = question_words['qwds_cureway']
+        self.qwds_cureprob = question_words['qwds_cureprob']
+        self.qwds_complication = question_words['qwds_complication']
+        self.qwds_prevent = question_words['prevent']
+        self.qwds_duration = question_words['qwds_duration']
+        self.qwds_easyget = question_words['qwds_easyget']
+        self.qwds_cure = question_words['qwds_cure']
 
     '''get the dictionary of question entities and their own types'''
     def get_question_entity_type(self, question):
@@ -146,24 +142,23 @@ class QuestionParser:
         if self.check_words(self.qwds_check, question) and mc.CHECK in types:
             question_types.append(mc.CHECK_DISE)
         
+        # drug
+        if self.check_words(self.qwds_drug, question) and mc.DISEASE in types:
+            question_types.append(mc.DISE_DRUG)
         # food
-        if self.check_words(self.qwds_food, question) and mc.DISEASE in types:
+        elif self.check_words(self.qwds_food, question) and mc.DISEASE in types:
             deny_status = self.check_words(self.deny_words, question)
             if deny_status:
                 question_types.append(mc.DISE_NOT_FOOD)
             else:
                 question_types.append(mc.DISE_DO_FOOD)
 
-        # drug
-        if self.check_words(self.qwds_drug, question) and mc.DISEASE in types:
-            question_types.append(mc.DISE_DRUG)
-
         # complication
         if self.check_words(self.qwds_complication, question) and mc.DISEASE in types:
             question_types.append(mc.DISE_COMP)
 
         # cure probbility
-        if self.check_words(self.qwds_curepro, question) and mc.DISEASE in types:
+        if self.check_words(self.qwds_cureprob, question) and mc.DISEASE in types:
             question_types.append(mc.DISE_CUREPROB)
 
         # cure way
@@ -187,13 +182,14 @@ class QuestionParser:
             question_types.append(mc.DISE_EASY)
 
         # if the question_types is empty
-        if question_types is [] and mc.DISEASE in types:
+        if question_types == [] and mc.DISEASE in types:
             question_types.append(mc.DISE_DESC)
-        elif question_types is [] and mc.SYMPTOM in types:
+        elif question_types == [] and mc.SYMPTOM in types:
             question_types.append(mc.SYMP_DISE)
-        elif question_types is [] and mc.DRUG in types:
+        elif question_types == [] and mc.DRUG in types:
             question_types.append(mc.DRUG_DISE)
-
+        elif question_types == [] and mc.CHECK in types:
+            question_types.append(mc.CHECK_DISE)
 
         question_meta['question_types'] = list(set(question_types))
         return question_meta

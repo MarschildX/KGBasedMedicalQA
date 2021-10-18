@@ -2,7 +2,7 @@ import medicalconst as mc
 
 class QueryGenerator:
     def __init__(self):
-        pass
+        self.item_limit = 25 # the maximum number of items
     
     '''generate query statement based on question_meta'''
     def generate_query(self, question_meta):
@@ -32,8 +32,8 @@ class QueryGenerator:
         cql = []
         # symptom - disease
         if question_type == mc.SYMP_DISE:
-            cql = ["MATCH (m:Disease)-[r:has_symptom]->(n:Symptom) WHERE n.name = '{0}' RETURN m.name, r.name, n.name"
-                .format(i) for i in entities]
+            cql = ["MATCH (m:Disease)-[r:has_symptom]->(n:Symptom) WHERE n.name = '{0}' RETURN m.name, r.name, n.name LIMIT {1}"
+                .format(i, self.item_limit) for i in entities]
         # disease - symptom
         elif question_type == mc.DISE_SYMP:
             cql = ["MATCH (m:Disease)-[r:has_symptom]->(n:Symptom) WHERE m.name = '{0}' RETURN m.name, r.name, n.name"
@@ -48,8 +48,8 @@ class QueryGenerator:
                 .format(i) for i in entities]
         # check - disease
         elif question_type == mc.CHECK_DISE:
-            cql = ["MATCH (m:Disease)-[r:need_check]->(n:Check) WHERE n.name = '{0}' RETURN m.name, r.name, n.name"
-                .format(i) for i in entities]
+            cql = ["MATCH (m:Disease)-[r:need_check]->(n:Check) WHERE n.name = '{0}' RETURN m.name, r.name, n.name LIMIT {1}"
+                .format(i, self.item_limit) for i in entities]
         # disease - cause
         elif question_type == mc.DISE_CAUSE:
             cql = ["MATCH (m:Disease) WHERE m.name = '{0}' RETURN m.name, m.cause".format(i) for i in entities]
@@ -73,10 +73,10 @@ class QueryGenerator:
             cql = cql1 + cql2
         # drug -disease
         elif question_type == mc.DRUG_DISE:
-            cql1 = ["MATCH (m:Disease)-[r:common_drug]->(n:Drug) WHERE n.name = '{0}' RETURN m.name, r.name, n.name"
-                .format(i) for i in entities]
-            cql2 = ["MATCH (m:Disease)-[r:recommand_drug]->(n:Drug) WHERE n.name = '{0}' RETURN m.name, r.name, n.name"
-                .format(i) for i in entities]
+            cql1 = ["MATCH (m:Disease)-[r:common_drug]->(n:Drug) WHERE n.name = '{0}' RETURN m.name, r.name, n.name LIMIT {1}"
+                .format(i, self.item_limit) for i in entities]
+            cql2 = ["MATCH (m:Disease)-[r:recommand_drug]->(n:Drug) WHERE n.name = '{0}' RETURN m.name, r.name, n.name LIMIT {1}"
+                .format(i, self.item_limit) for i in entities]
             cql = cql1 + cql2
         # disease - cureway
         elif question_type == mc.DISE_CUREWAY:
