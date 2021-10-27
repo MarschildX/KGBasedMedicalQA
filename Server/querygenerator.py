@@ -62,7 +62,7 @@ class QueryGenerator:
             cql = cql1 + cql2
         # disease - not -food
         elif question_type == mc.DISE_NOT_FOOD:
-            cql = ["MATCH (m:Disease)-[r:not_eat]->(n:Food) WHERE m.name = '{0}' RETURN m.name, r.name, n.name"
+            cql = ["MATCH (m:Disease)-[r:no_eat]->(n:Food) WHERE m.name = '{0}' RETURN m.name, r.name, n.name"
                 .format(i) for i in entities]
         # disease - drug
         elif question_type == mc.DISE_DRUG:

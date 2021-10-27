@@ -7,9 +7,9 @@ import pymongo
 
 class CrimeSpider:
     def __init__(self):
-        # self.conn = pymongo.MongoClient()
-        # self.db = self.conn['medical']
-        # self.col = self.db['raw_data']
+        self.conn = pymongo.MongoClient()
+        self.db = self.conn['medical']
+        self.col = self.db['raw_data']
         return
 
     '''request html page according to url'''

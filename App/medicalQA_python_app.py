@@ -9,7 +9,7 @@ qa_url = 'http://106.15.90.138:5000/question'
 
 
 while True:
-    question = input("question: ")
+    question = input("\033[33mquestion: \033[0m")
     question_json = json.dumps({'question': question})
     response = requests.post(url=qa_url, headers=headers, data=question_json)
     answers = response.json()['answers']
