@@ -50,7 +50,7 @@ class QuestionParser:
         self.qwds_cureway = question_words['qwds_cureway']
         self.qwds_cureprob = question_words['qwds_cureprob']
         self.qwds_complication = question_words['qwds_complication']
-        self.qwds_prevent = question_words['prevent']
+        self.qwds_prevent = question_words['qwds_prevent']
         self.qwds_duration = question_words['qwds_duration']
         self.qwds_easyget = question_words['qwds_easyget']
         self.qwds_cure = question_words['qwds_cure']
@@ -109,11 +109,19 @@ class QuestionParser:
         return False
 
     '''the main function to parse the question'''
-    def parse_question(self, question):
+    def parse_question(self, question, entities_dict, user_id):
         question_meta = {}
+
         question_entity_type = self.get_question_entity_type(question)
+
+        # simple context mechanism
         if question_entity_type == {}:
-            return {}
+            if user_id in entities_dict:
+                question_entity_type = entities_dict[user_id]
+            else:
+                return {}
+        entities_dict[user_id] = question_entity_type
+
         question_meta['args'] = question_entity_type
         # the types of entities that present in question
         types = []
