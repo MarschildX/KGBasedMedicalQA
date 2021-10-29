@@ -1,6 +1,9 @@
 '''
 The medical QA server, based on Flask framework.
 '''
+from gevent import monkey
+from gevent.pywsgi import WSGIServer
+monkey.patch_all()
 from flask import Flask, make_response, request
 import json
 from questionparser import QuestionParser
@@ -11,11 +14,13 @@ app = Flask(__name__)
 parser = QuestionParser()
 query_generator = QueryGenerator()
 answer_builder = AnswerBuilder()
+print('Server prepares well.')
 
 '''the medical QA api'''
 @app.route('/question', methods=['POST'])
 def question_and_answering():
     answers = []
+    ip = request.remote_addr
     if request.method == 'POST':
         data = request.get_data()
         question_dict = json.loads(data)
@@ -31,4 +36,4 @@ def question_and_answering():
     return json.dumps(answers_dict)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='5000')
+    WSGIServer(('0.0.0.0', 5320), app).serve_forever()
