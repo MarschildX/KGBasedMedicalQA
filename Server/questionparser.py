@@ -116,8 +116,11 @@ class QuestionParser:
 
         # simple context mechanism
         if question_entity_type == {}:
-            if user_id in entities_dict:
-                question_entity_type = entities_dict[user_id]
+            if self.is_valid_question_type(question):
+                if user_id in entities_dict:
+                    question_entity_type = entities_dict[user_id]
+                else:
+                    return {}
             else:
                 return {}
         entities_dict[user_id] = question_entity_type
@@ -202,6 +205,38 @@ class QuestionParser:
         question_meta['question_types'] = list(set(question_types))
         return question_meta
 
+    def is_valid_question_type(self, question):
+        if self.check_words(self.qwds_symptom, question):
+            return True
+        if self.check_words(self.qwds_symptom, question):
+            return True
+        if self.check_words(self.qwds_department, question):
+            return True
+        if self.check_words(self.qwds_cause, question):
+            return True
+        if self.check_words(self.qwds_check, question):
+            return True
+        if self.check_words(self.qwds_check, question):
+            return True
+        if self.check_words(self.qwds_drug, question):
+            return True
+        elif self.check_words(self.qwds_food, question):
+            return True
+        if self.check_words(self.qwds_complication, question):
+            return True
+        if self.check_words(self.qwds_cureprob, question):
+            return True
+        if self.check_words(self.qwds_cureway, question):
+            return True
+        if self.check_words(self.qwds_cure, question):
+            return True
+        if self.check_words(self.qwds_duration, question):
+            return True
+        if self.check_words(self.qwds_prevent, question):
+            return True
+        if self.check_words(self.qwds_easyget, question):
+            return True
+        return False
 
 '''testing code'''
 if __name__ == '__main__':

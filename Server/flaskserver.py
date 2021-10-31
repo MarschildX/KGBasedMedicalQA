@@ -8,6 +8,7 @@ from flask import Flask, make_response, request
 import json
 import os 
 import time
+import fcntl
 from questionparser import QuestionParser
 from querygenerator import QueryGenerator
 from answerbuilder import AnswerBuilder
@@ -29,7 +30,7 @@ def question_and_answering():
         question_dict = json.loads(data)
         mac = question_dict['mac']
         user_id = ip + '$' + mac
-        question = question_dict['question']
+        question = question_dict['question'].replace(' ', '')
         question_meta = parser.parse_question(question, entities_dict, user_id)
         CQLs = query_generator.generate_query(question_meta)
         answers = answer_builder.build_answer(CQLs)
@@ -40,8 +41,9 @@ def question_and_answering():
     answers_dict = {'answers': answers}
     return json.dumps(answers_dict)
 
+
 '''the feedback api'''
-@app.route('/feedback', method=['POST'])
+@app.route('/feedback', methods=['POST'])
 def feedback():
     prefix_path = '/'.join(os.path.abspath(__file__).split('/')[:-1])
     feedback_file_path = os.path.join(prefix_path, 'feedback')
@@ -61,15 +63,17 @@ def feedback():
     ip = request.remote_addr
     mac = data['mac']
     user_id = ip + '$' + mac
-    context_dict = entities_dict.get(user_id, default={})
+    context_dict = entities_dict.get(user_id, {})
     context = str(context_dict)
 
     curr_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-    
+
     fb =curr_time + '---' + user_id + '---' + feedback + '---' + question + '---' + context + '\n'
 
     with open(feedback_file_path+'/user_feedback.txt', 'a') as ff:
+        fcntl.flock(ff, fcntl.LOCK_EX)
         ff.write(fb)
+        fcntl.flock(ff, fcntl.LOCK_UN)
     
 
 if __name__ == '__main__':
