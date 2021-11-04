@@ -37,8 +37,11 @@ def question_and_answering():
 
     if answers == []:
         answers = ['抱歉，暂时还无法解答你的问题，如需获取更多信息请咨询相关医生。']
+
+    context_dict = entities_dict.get(user_id, {})
+    context = str(context_dict)
     
-    answers_dict = {'answers': answers}
+    answers_dict = {'answers': answers, 'question': question, 'context': context}
     return json.dumps(answers_dict)
 
 

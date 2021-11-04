@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Heal</string>
+    <string name="hint_enter_a_message">输入你的问题…</string>
+    <string name="action_feedback_useful">feedback useful</string>
+    <string name="action_copy">copy content</string>
+    <string name="copied_message">已复制至剪切板</string>
+    <string name="feedback_successfully">反馈成功</string>
+</resources>

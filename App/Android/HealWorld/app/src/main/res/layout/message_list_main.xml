@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <com.stfalcon.chatkit.messages.MessagesList
+        android:id="@+id/messagesList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/input"
+        app:textAutoLink="all"
+        app:incomingTextLinkColor="@color/Burlywood1"
+        app:outcomingTextLinkColor="@color/Burlywood1"
+        app:outcomingDefaultBubbleColor="@color/indian_red1"
+        app:outcomingBubblePaddingTop="12dp"
+        app:outcomingBubblePaddingBottom="12dp"
+        app:outcomingBubblePaddingLeft="15dp"
+        app:outcomingBubblePaddingRight="15dp"
+        app:outcomingDefaultBubblePressedColor="@color/indian_red2"
+        app:incomingBubblePaddingTop="12dp"
+        app:incomingBubblePaddingBottom="12dp"
+        app:incomingBubblePaddingLeft="15dp"
+        app:incomingBubblePaddingRight="15dp"
+        app:incomingDefaultBubbleColor="@color/gray_light"
+        app:incomingDefaultBubblePressedColor="@color/gray" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/input"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@color/gray_light" />
+
+    <com.stfalcon.chatkit.messages.MessageInput
+        android:id="@+id/input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:inputHint="@string/hint_enter_a_message"
+        app:showAttachmentButton="true"
+        app:inputButtonDefaultBgPressedColor="@color/indian_red2"
+        app:inputButtonDefaultBgColor="@color/indian_red1"
+        app:attachmentButtonDefaultIconColor="@color/black"
+        app:attachmentButtonDefaultIconPressedColor="@color/black" />
+
+</RelativeLayout>
