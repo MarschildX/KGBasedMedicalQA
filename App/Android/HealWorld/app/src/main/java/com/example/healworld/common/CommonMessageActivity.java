@@ -3,10 +3,16 @@ package com.example.healworld.common;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -112,6 +118,54 @@ public class CommonMessageActivity extends AppCompatActivity
             return String.format(Locale.getDefault(), "%s: %s (%s)",
                     chatMessage.getUser().getName(), text, createdAt);
         };
+    }
+
+    /**
+     * set some touch event here, such as exiting the keyboard if click the region out of EditText and keyboard
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideKeyboard(v, ev)) {
+                hideKeyboard(v.getWindowToken());
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * Compare the coordinate of EditText and the region that user click,
+     * because if user click EditText, do not exit the keyboard.
+     */
+    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v != null && (v instanceof EditText)) {
+            int[] l = {0, 0};
+            v.getLocationInWindow(l);
+            int left = l[0],
+                top = l[1],
+                bottom = top + v.getHeight(),
+                right = left + v.getWidth();
+            if (event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom) {
+                // if click EditText, ignore it.
+                return false;
+            } else {
+                return true;
+            }
+        }
+        // if the current focus is not EditText, then return false.
+        return false;
+    }
+
+    /**
+     * utilize InputMethodManager to hide the keyboard.
+     */
+    private void hideKeyboard(IBinder token) {
+        if (token != null) {
+            InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            im.hideSoftInputFromWindow(token, InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
 }

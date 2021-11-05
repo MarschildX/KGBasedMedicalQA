@@ -60,14 +60,15 @@ def feedback():
         data = json.loads(data)
         feedback = data['feedback']
         question = data['question']
+        context = data['context']
     if question == '' or feedback == '':
         return
 
     ip = request.remote_addr
     mac = data['mac']
     user_id = ip + '$' + mac
-    context_dict = entities_dict.get(user_id, {})
-    context = str(context_dict)
+    # context_dict = entities_dict.get(user_id, {})
+    # context = str(context_dict)
 
     curr_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
@@ -77,6 +78,8 @@ def feedback():
         fcntl.flock(ff, fcntl.LOCK_EX)
         ff.write(fb)
         fcntl.flock(ff, fcntl.LOCK_UN)
+
+    return json.dumps({'feedback': 'got it'})
     
 
 if __name__ == '__main__':

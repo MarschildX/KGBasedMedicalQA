@@ -50,11 +50,11 @@ public class AppUtil {
      */
     private static String getMacMoreThanM(Context paramContext) {
         try {
-            //获取本机器所有的网络接口
+            // get all internet interface of the device
             Enumeration enumeration = NetworkInterface.getNetworkInterfaces();
             while (enumeration.hasMoreElements()) {
                 NetworkInterface networkInterface = (NetworkInterface)enumeration.nextElement();
-                //获取硬件地址，一般是MAC
+                // get mac address
                 byte[] arrayOfByte = networkInterface.getHardwareAddress();
                 if (arrayOfByte == null || arrayOfByte.length == 0) {
                     continue;
@@ -62,15 +62,15 @@ public class AppUtil {
 
                 StringBuilder stringBuilder = new StringBuilder();
                 for (byte b : arrayOfByte) {
-                    //格式化为：两位十六进制加冒号的格式，若是不足两位，补0
+                    // formatting address to like 00:00:00:00:00:00
                     stringBuilder.append(String.format("%02X:", new Object[] { Byte.valueOf(b) }));
                 }
                 if (stringBuilder.length() > 0) {
-                    //删除后面多余的冒号
+                    // delete the redundant colons
                     stringBuilder.deleteCharAt(stringBuilder.length() - 1);
                 }
                 String str = stringBuilder.toString();
-                // wlan0:无线网卡 eth0：以太网卡
+                // wlan0:wireless NetCard, eth0：ethernet NetCard
                 if (networkInterface.getName().equals("wlan0")) {
                     return str;
                 }

@@ -21,7 +21,7 @@ public class ChatMessage implements IMessage {
     }
 
     public ChatMessage(String id, User user, String text, String question, String context){
-        this(id, user, text, "null", "null", new Date());
+        this(id, user, text, question, context, new Date());
     }
 
     public ChatMessage(String id, User user, String text, String question, String context, Date createdAt){

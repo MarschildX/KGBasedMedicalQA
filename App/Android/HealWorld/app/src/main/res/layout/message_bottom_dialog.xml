@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/pop_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_marginBottom="@dimen/standard_20px"
+            android:id="@+id/btn_copy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_all_round_corner"
+            android:padding="@dimen/standard_30px"
+            android:text="@string/copy"
+            android:textSize="@dimen/dialog_btn_text_size"
+            android:textColor="@color/black" />
+        <Button
+            android:id="@+id/btn_feedback_useful"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_top_round_corner"
+            android:padding="@dimen/standard_30px"
+            android:text="@string/feedback_useful"
+            android:textSize="@dimen/dialog_btn_text_size"
+            android:textColor="@color/black" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:background="@color/color_dialog_line" />
+        <Button
+            android:id="@+id/btn_feedback_not_exact_correct"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_no_round_corner"
+            android:padding="@dimen/standard_30px"
+            android:text="@string/feedback_not_exact_correct"
+            android:textSize="@dimen/dialog_btn_text_size"
+            android:textColor="@color/black" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:background="@color/color_dialog_line" />
+        <Button
+            android:id="@+id/btn_feedback_wait_to_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_bottom_round_corner"
+            android:padding="@dimen/standard_30px"
+            android:text="@string/feedback_wait_to_add"
+            android:textSize="@dimen/dialog_btn_text_size"
+            android:textColor="@color/black" />
+        <Button
+            android:layout_marginTop="@dimen/standard_20px"
+            android:id="@+id/btn_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_all_round_corner"
+            android:padding="@dimen/standard_30px"
+            android:text="@string/cancel"
+            android:textSize="@dimen/dialog_btn_text_size"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+</RelativeLayout>
