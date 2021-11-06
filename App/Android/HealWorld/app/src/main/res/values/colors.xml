@@ -8,6 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name='gray_light'>#FFe8e8e8</color>
+    <color name="gray_light1">#FFeeeeee</color>
+    <color name="gray_light2">#FFf7f7f7</color>
     <color name='gray'>#FFd9d9d9</color>
     <color name='indian_red1'>#FF6A6A</color>
     <color name='indian_red2'>#CD5C5C</color>

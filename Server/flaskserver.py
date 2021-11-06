@@ -49,9 +49,10 @@ def question_and_answering():
 @app.route('/feedback', methods=['POST'])
 def feedback():
     prefix_path = '/'.join(os.path.abspath(__file__).split('/')[:-1])
-    feedback_file_path = os.path.join(prefix_path, 'feedback')
-    if not feedback_file_path:
-        os.makedirs(feedback_file_path)
+    # feedback_file_path = os.path.join(prefix_path, 'feedback')
+    # if not feedback_file_path:
+    #     os.makedirs(feedback_file_path)
+    feedback_file_path = prefix_path
 
     question = ''
     feedback = ''
