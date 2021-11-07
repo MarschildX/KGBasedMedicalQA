@@ -51,7 +51,7 @@ public class CommonMessageActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
-        getMenuInflater().inflate(R.menu.feedback_menu, menu);
+//        getMenuInflater().inflate(R.menu.feedback_menu, menu);
         return true;
     }
 
@@ -80,9 +80,9 @@ public class CommonMessageActivity extends AppCompatActivity
         }
     }
 
-    /*
+    /**
     * load the history data
-    * */
+    */
     @Override
     public void onLoadMore(int page, int totalItemsCount) {
         Log.i("TAG", "onLoadMore: " + page + " " + totalItemsCount);

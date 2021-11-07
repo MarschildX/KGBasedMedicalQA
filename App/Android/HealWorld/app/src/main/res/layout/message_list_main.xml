@@ -47,6 +47,7 @@
         app:attachmentButtonDefaultIconColor="@color/black"
         app:attachmentButtonDefaultIconPressedColor="@color/black"
         app:inputBackground="@drawable/edittext_round_corner"
-        app:inputTextSize="16sp"/>
+        app:inputTextSize="16sp"
+        app:attachmentButtonIcon="@drawable/ic_speech" />
 
 </RelativeLayout>

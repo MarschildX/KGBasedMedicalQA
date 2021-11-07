@@ -3,4 +3,5 @@
     <dimen name="standard_30px">30px</dimen>
     <dimen name="standard_20px">20px</dimen>
     <dimen name="dialog_btn_text_size">16sp</dimen>
+    <dimen name="attachment_btn_width">50dp</dimen>
 </resources>

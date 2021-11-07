@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.440625" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.4244791666666667" />
         <entry key="app/src/main/res/layout/custom_incoming_text_message.xml" value="0.4244791666666667" />
+        <entry key="app/src/main/res/layout/ifly_layout_mnotice_image.xml" value="0.4244791666666667" />
         <entry key="app/src/main/res/layout/message_bottom_dialog.xml" value="0.375" />
         <entry key="app/src/main/res/layout/message_list_main.xml" value="0.4244791666666667" />
         <entry key="app/src/main/res/menu/feedback_menu.xml" value="0.4244791666666667" />

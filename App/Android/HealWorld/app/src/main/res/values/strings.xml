@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Heal</string>
+    <string name="app_name">Heal the World</string>
     <string name="hint_enter_a_message">输入你的问题…</string>
     <string name="action_feedback_useful">feedback useful</string>
     <string name="action_copy">已复制到剪切板</string>
