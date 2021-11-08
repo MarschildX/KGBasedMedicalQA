@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.stfalcon.chatkit.messages.MessagesList
         android:id="@+id/messagesList"
@@ -48,6 +48,6 @@
         app:attachmentButtonDefaultIconPressedColor="@color/black"
         app:inputBackground="@drawable/edittext_round_corner"
         app:inputTextSize="16sp"
-        app:attachmentButtonIcon="@drawable/ic_speech" />
+        app:attachmentButtonIcon="@drawable/ic_speech"/>
 
 </RelativeLayout>

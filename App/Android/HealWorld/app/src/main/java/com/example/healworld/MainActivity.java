@@ -2,6 +2,7 @@ package com.example.healworld;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
@@ -36,6 +37,7 @@ import com.example.healworld.utils.AppUtil;
 import com.example.healworld.utils.HttpConnection;
 import com.example.healworld.utils.JSONParser;
 
+import com.google.android.material.button.MaterialButton;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.RecognizerResult;
@@ -118,6 +120,12 @@ public class MainActivity extends CommonMessageActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // set the Icon
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_heal);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         setContentView(R.layout.message_list_main);
 
         initMessageList();
