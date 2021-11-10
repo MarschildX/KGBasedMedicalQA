@@ -1,9 +1,10 @@
-package com.example.healworld.common;
+package com.example.healworld.common.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -18,8 +19,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.example.healworld.FavoriteListActivity;
 import com.example.healworld.R;
-import com.example.healworld.utils.AppUtil;
 import com.stfalcon.chatkit.commons.ImageLoader;
 import com.stfalcon.chatkit.messages.MessagesListAdapter;
 import com.example.healworld.model.ChatMessage;
@@ -36,6 +37,7 @@ public class CommonMessageActivity extends AppCompatActivity
     protected Menu menu;
     private int selectionCount;
     private Date lastLoadedDate;
+    protected final static String FAVORITEFILEDIR = "favorite_file.json";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,33 +53,21 @@ public class CommonMessageActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
-//        getMenuInflater().inflate(R.menu.feedback_menu, menu);
+        getMenuInflater().inflate(R.menu.favorite_menu, menu);
         return true;
     }
 
-    // 右上角的两个按钮
+    // the menu at top right
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_feedback_useful:
-//                messagesAdapter.deleteSelectedMessages();
-                AppUtil.showToast(this, R.string.feedback_successfully, false);
-                break;
-            case R.id.action_copy:
-//                messagesAdapter.copySelectedMessagesText(this, getMessageStringFormatter(), true);
-                AppUtil.showToast(this, R.string.copied_message, true);
+            case R.id.menu_item_favorite:
+                Intent intent = new Intent(CommonMessageActivity.this, FavoriteListActivity.class);
+                intent.putExtra("favorite_file_dir", FAVORITEFILEDIR);
+                startActivity(intent);
                 break;
         }
         return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (selectionCount == 0) {
-            super.onBackPressed();
-        } else {
-            messagesAdapter.unselectAllItems();
-        }
     }
 
     /**

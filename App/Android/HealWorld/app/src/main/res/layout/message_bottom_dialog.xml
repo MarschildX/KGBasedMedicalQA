@@ -10,15 +10,29 @@
         android:orientation="vertical">
 
         <Button
-            android:layout_marginBottom="@dimen/standard_20px"
             android:id="@+id/btn_copy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_all_round_corner"
+            android:background="@drawable/btn_top_round_corner"
             android:padding="@dimen/standard_30px"
             android:text="@string/copy"
             android:textSize="@dimen/dialog_btn_text_size"
             android:textColor="@color/black" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:background="@color/color_dialog_line" />
+        <Button
+            android:layout_marginBottom="@dimen/standard_20px"
+            android:id="@+id/btn_favorite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_bottom_round_corner"
+            android:padding="@dimen/standard_30px"
+            android:text="@string/favorite"
+            android:textSize="@dimen/dialog_btn_text_size"
+            android:textColor="@color/black" />
+
         <Button
             android:id="@+id/btn_feedback_useful"
             android:layout_width="match_parent"

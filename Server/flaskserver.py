@@ -31,12 +31,16 @@ def question_and_answering():
         mac = question_dict['mac']
         user_id = ip + '$' + mac
         question = question_dict['question'].replace(' ', '')
-        question_meta = parser.parse_question(question, entities_dict, user_id)
-        CQLs = query_generator.generate_query(question_meta)
-        answers = answer_builder.build_answer(CQLs)
+        has_entity, question_meta, candidates = parser.parse_question(question, entities_dict, user_id)
+        if not has_entity:
+            candidates_str = '、'.join(candidates)
+            answers = ['你可能对' + candidates_str + '感兴趣，请用这些实体进行提问。']
+        else:
+            CQLs = query_generator.generate_query(question_meta)
+            answers = answer_builder.build_answer(CQLs)
 
-    if answers == []:
-        answers = ['抱歉，暂时还无法解答你的问题，如需获取更多信息请咨询相关医生。']
+            if answers == []:
+                answers = ['抱歉，暂时还无法解答你的问题，如需获取更多信息请咨询相关医生。']
 
     context_dict = entities_dict.get(user_id, {})
     context = str(context_dict)

@@ -2,6 +2,8 @@ import ahocorasick
 import os
 import medicalconst as mc
 import json
+import Levenshtein
+import jieba
 
 
 class QuestionParser:
@@ -54,6 +56,8 @@ class QuestionParser:
         self.qwds_duration = question_words['qwds_duration']
         self.qwds_easyget = question_words['qwds_easyget']
         self.qwds_cure = question_words['qwds_cure']
+
+        jieba.initialize() # load the dictionnary and construct Trie tree
 
     '''get the dictionary of question entities and their own types'''
     def get_question_entity_type(self, question):
@@ -113,6 +117,27 @@ class QuestionParser:
         question_meta = {}
 
         question_entity_type = self.get_question_entity_type(question)
+
+        # calculate similarity and judge whether going to the next step
+        if question_entity_type == {}:
+            candidates = []
+            cut_words = jieba.lcut(question)
+            # for i in range(len(question)):
+            #     for j in range(i, len(question)):
+            #         for word in self.words_all:
+            #             distance = Levenshtein.distance(word, question[i:j+1])
+            #             similarity = 1 - float(distance) / float(len(word))
+            #             if similarity >= 0.6:
+            #                 candidates.append(word)
+            for cw in cut_words:
+                for word in self.words_all:
+                    distance = Levenshtein.distance(word, cw)
+                    similarity = 1 - float(distance) / float(len(word))
+                    if similarity >= 0.6:
+                        candidates.append(word)
+            # if find some candidates, return immediately
+            if candidates:
+                return False, {}, list(set(candidates))
 
         # simple context mechanism
         if question_entity_type == {}:
@@ -203,7 +228,7 @@ class QuestionParser:
             question_types.append(mc.CHECK_DISE)
 
         question_meta['question_types'] = list(set(question_types))
-        return question_meta
+        return True, question_meta, []
 
     def is_valid_question_type(self, question):
         if self.check_words(self.qwds_symptom, question):
@@ -237,6 +262,32 @@ class QuestionParser:
         if self.check_words(self.qwds_easyget, question):
             return True
         return False
+
+    '''calculate the edit distance of two entities, to gauge the similarity.'''
+    def edit_distance(self, word1: str, word2: str) -> int:
+        n = len(word1)
+        m = len(word2)
+        
+        # if a word is empty
+        if n * m == 0:
+            return n + m
+        
+        D = [ [0] * (m + 1) for _ in range(n + 1)]
+        for i in range(n + 1):
+            D[i][0] = i
+        for j in range(m + 1):
+            D[0][j] = j
+        
+        for i in range(1, n + 1):
+            for j in range(1, m + 1):
+                left = D[i - 1][j] + 1
+                down = D[i][j - 1] + 1
+                left_down = D[i - 1][j - 1] 
+                if word1[i - 1] != word2[j - 1]:
+                    left_down += 1
+                D[i][j] = min(left, down, left_down)
+        return D[n][m]
+
 
 '''testing code'''
 if __name__ == '__main__':

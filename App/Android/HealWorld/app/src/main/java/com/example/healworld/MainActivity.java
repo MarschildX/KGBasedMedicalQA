@@ -1,8 +1,6 @@
 package com.example.healworld;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
@@ -17,7 +15,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,7 +26,7 @@ import androidx.annotation.StringRes;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.healworld.common.CommonMessageActivity;
+import com.example.healworld.common.activity.CommonMessageActivity;
 import com.example.healworld.model.ChatMessage;
 import com.example.healworld.model.User;
 import com.example.healworld.utils.MessageUtil;
@@ -37,7 +34,6 @@ import com.example.healworld.utils.AppUtil;
 import com.example.healworld.utils.HttpConnection;
 import com.example.healworld.utils.JSONParser;
 
-import com.google.android.material.button.MaterialButton;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.RecognizerResult;
@@ -54,6 +50,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -120,12 +118,6 @@ public class MainActivity extends CommonMessageActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // set the Icon
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_heal);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         setContentView(R.layout.message_list_main);
 
         initMessageList();
@@ -219,6 +211,14 @@ public class MainActivity extends CommonMessageActivity
             case R.id.btn_cancel:
                 bottomDialog.dismiss();
                 break;
+            case R.id.btn_favorite:
+                boolean isSuccessful = saveFavoriteToFile(currChatMessage);
+                bottomDialog.dismiss();
+                if(isSuccessful)
+                    AppUtil.showToast(this, R.string.add_to_favorite_successfully, false);
+                else
+                    AppUtil.showToast(this, R.string.add_to_favorite_failed, false);
+                break;
         }
     }
 
@@ -249,12 +249,14 @@ public class MainActivity extends CommonMessageActivity
         final Button btnNotExactCorrect = (Button) window.findViewById(R.id.btn_feedback_not_exact_correct);
         final Button btnWaitToAdd = (Button) window.findViewById(R.id.btn_feedback_wait_to_add);
         final Button btnCancel = (Button) window.findViewById(R.id.btn_cancel);
+        final Button btnFavorite = (Button) window.findViewById(R.id.btn_favorite);
 
         btnCopy.setOnClickListener(this);
         btnUseful.setOnClickListener(this);
         btnNotExactCorrect.setOnClickListener(this);
         btnWaitToAdd.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
+        btnFavorite.setOnClickListener(this);
     }
 
     private void initInfo(){
@@ -459,5 +461,25 @@ public class MainActivity extends CommonMessageActivity
         }
         msgEditText.setText(resultBuffer.toString()); // set the speech recognition result to EditText
         msgEditText.setSelection(resultBuffer.toString().length()); // set the cursor to the end
+    }
+
+    private boolean saveFavoriteToFile(ChatMessage chatMessage){
+        try{
+            String text = chatMessage.getText();
+            String question = chatMessage.getCorrespondingQuestion();
+            JSONObject obj = new JSONObject();
+            obj.put("question", question);
+            obj.put("text", text);
+            FileOutputStream fos = openFileOutput(FAVORITEFILEDIR, Context.MODE_APPEND);
+            String data = obj.toString();
+            data += ",";
+            fos.write(data.getBytes(StandardCharsets.UTF_8));
+            fos.flush();
+            fos.close();
+        }
+        catch(Exception e){
+            return false;
+        }
+        return true;
     }
 }
