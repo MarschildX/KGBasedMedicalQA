@@ -16,4 +16,6 @@
     <string name="add_to_favorite">已收藏</string>
     <string name="add_to_favorite_successfully">收藏成功</string>
     <string name="add_to_favorite_failed">收藏失败</string>
+    <string name="cant_add_to_favorite">用户提问不支持收藏</string>
+    <string name="favorite_detail">详情</string>
 </resources>

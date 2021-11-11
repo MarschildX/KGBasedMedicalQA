@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -50,11 +51,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 
 public class MainActivity extends CommonMessageActivity
@@ -71,6 +78,7 @@ public class MainActivity extends CommonMessageActivity
     private Handler myHandler;
     private Dialog bottomDialog;
     private final String SORRYCANTANSWER = "抱歉，暂时还无法解答你的问题，如需获取更多信息请咨询相关医生。";
+    private final String HISTORYFILEDIR = "history_messages.json";
     private ChatMessage currChatMessage;
 
     private final static String TAG = "MainActivity";
@@ -97,10 +105,14 @@ public class MainActivity extends CommonMessageActivity
                 case 1:
                     if(msg.obj != null){
                         HashMap<String, String> result = handleAnswerJSON(msg.obj.toString());
-                        messagesListAdapter.addToStart(new ChatMessage(messageUtil.generateId(), doctor, result.get("answer"), result.get("question"), result.get("context")), true);
+                        ChatMessage chatMessage = new ChatMessage(messageUtil.generateId(), doctor, result.get("answer"), result.get("question"), result.get("context"));
+                        messagesListAdapter.addToStart(chatMessage, true);
+                        saveMessage(chatMessage);
                     }
                     else{
-                        messagesListAdapter.addToStart(new ChatMessage(messageUtil.generateId(), doctor, SORRYCANTANSWER), true);
+                        ChatMessage chatMessage = new ChatMessage(messageUtil.generateId(), doctor, SORRYCANTANSWER);
+                        messagesListAdapter.addToStart(chatMessage, true);
+                        saveMessage(chatMessage);
                     }
                     break;
                 case 2:
@@ -126,17 +138,21 @@ public class MainActivity extends CommonMessageActivity
         initInfo();
         initPermission();
         initASRComponent();
+        initHistoryMessages();
     }
 
     @Override
     public void onMessageLongClick(ChatMessage chatMessage){
         currChatMessage = chatMessage;
+        Log.i("user_id", currChatMessage.getUser().getId());
         bottomDialog.show();
     }
 
     @Override
     public boolean onSubmit(CharSequence input) {
-        super.messagesAdapter.addToStart(new ChatMessage(messageUtil.generateId(), user, input.toString()), true);
+        ChatMessage chatMessage = new ChatMessage(messageUtil.generateId(), user, input.toString());
+        super.messagesAdapter.addToStart(chatMessage, true);
+        saveMessage(chatMessage);
         new Thread() {
             @Override
             public void run() {
@@ -212,13 +228,19 @@ public class MainActivity extends CommonMessageActivity
                 bottomDialog.dismiss();
                 break;
             case R.id.btn_favorite:
-                boolean isSuccessful = saveFavoriteToFile(currChatMessage);
-                bottomDialog.dismiss();
-                if(isSuccessful)
-                    AppUtil.showToast(this, R.string.add_to_favorite_successfully, false);
-                else
-                    AppUtil.showToast(this, R.string.add_to_favorite_failed, false);
-                break;
+                if(currChatMessage.getUser().getId().equals(doctor.getId())) {
+                    boolean isSuccessful = saveFavoriteToFile(currChatMessage);
+                    bottomDialog.dismiss();
+                    if (isSuccessful)
+                        AppUtil.showToast(this, R.string.add_to_favorite_successfully, false);
+                    else
+                        AppUtil.showToast(this, R.string.add_to_favorite_failed, false);
+                    break;
+                }
+                else{
+                    bottomDialog.dismiss();
+                    AppUtil.showToast(this, R.string.cant_add_to_favorite, false);
+                }
         }
     }
 
@@ -467,9 +489,12 @@ public class MainActivity extends CommonMessageActivity
         try{
             String text = chatMessage.getText();
             String question = chatMessage.getCorrespondingQuestion();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
+            String datetime = sdf.format(chatMessage.getCreatedAt());
             JSONObject obj = new JSONObject();
             obj.put("question", question);
             obj.put("text", text);
+            obj.put("datetime", datetime);
             FileOutputStream fos = openFileOutput(FAVORITEFILEDIR, Context.MODE_APPEND);
             String data = obj.toString();
             data += ",";
@@ -481,5 +506,88 @@ public class MainActivity extends CommonMessageActivity
             return false;
         }
         return true;
+    }
+
+    private void saveMessage(ChatMessage chatMessage){
+        try{
+            String id = chatMessage.getId();
+            String text = chatMessage.getText();
+            String question = chatMessage.getCorrespondingQuestion();
+            Date date = chatMessage.getCreatedAt();
+            User user = chatMessage.getUser();
+            String context = chatMessage.getQuestionContext();
+            JSONObject obj = new JSONObject();
+            obj.put("id", id);
+            obj.put("user_id", user.getId());
+            obj.put("user_name", user.getName());
+            obj.put("user_avatar", user.getAvatar());
+            obj.put("user_online", user.isOnline());
+            obj.put("text", text);
+            obj.put("question", question);
+            obj.put("context", context);
+            obj.put("date", date.getTime());
+            FileOutputStream fos = openFileOutput(HISTORYFILEDIR, Context.MODE_APPEND);
+            String data = obj.toString();
+            data += ",";
+            fos.write(data.getBytes(StandardCharsets.UTF_8));
+            fos.flush();
+            fos.close();
+        }
+        catch (Exception e){
+            // TODO
+        }
+    }
+
+    private ArrayList<ChatMessage> prepareHistoryMessages(){
+        try{
+            FileInputStream fis = openFileInput(HISTORYFILEDIR);
+            byte temp[] = new byte[1024];
+            List<byte[]> byteList = new ArrayList<byte[]>();
+            int len = 0;
+            while ((len = fis.read(temp)) > 0){
+                byte tmpByte[] = new byte[len];
+                System.arraycopy(temp, 0, tmpByte, 0, len);
+                byteList.add(tmpByte);
+            }
+            fis.close();
+            byte allByte[];
+            int totalLen = 0;
+            for(int i = 0; i < byteList.size(); i++){
+                totalLen += byteList.get(i).length;
+            }
+            allByte = new byte[totalLen];
+            int alreadyCopy = 0;
+            for(int i = 0; i < byteList.size(); i++){
+                System.arraycopy(byteList.get(i), 0, allByte, alreadyCopy, byteList.get(i).length);
+                alreadyCopy += byteList.get(i).length;
+            }
+            String jsonString = new String(allByte, 0, totalLen);
+
+            jsonString = "[" + jsonString.substring(0, jsonString.length()-1) + "]";
+            Log.i("json_history", jsonString);
+            JSONArray jsonArray = new JSONArray(jsonString);
+            ArrayList<ChatMessage> messages = new ArrayList<ChatMessage>();
+            for (int i = 0; i < jsonArray.length(); i++){
+                JSONObject obj= jsonArray.getJSONObject(i);
+                String id = obj.getString("id");
+                User user = new User(obj.getString("user_id"), obj.getString("user_name"), obj.getString("user_avatar"), obj.getBoolean("user_online"));
+                String text = obj.getString("text");
+                String question = obj.getString("question");
+                String context = obj.getString("context");
+                Date date = new Date(obj.getLong("date"));
+                ChatMessage msg = new ChatMessage(id, user, text, question, context, date);
+                messages.add(msg);
+            }
+            return messages;
+        }
+        catch (Exception e){
+            Log.i("history_message", "加载不出历史记录");
+            return new ArrayList<ChatMessage>();
+        }
+    }
+
+    private void initHistoryMessages(){
+        ArrayList<ChatMessage> messages = prepareHistoryMessages();
+        super.messagesAdapter.addToEnd(messages, true);
     }
 }

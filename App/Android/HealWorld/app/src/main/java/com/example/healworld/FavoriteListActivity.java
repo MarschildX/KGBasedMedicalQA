@@ -17,6 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FavoriteListActivity extends AppCompatActivity {
     private String[] mDataset;
@@ -91,12 +93,26 @@ public class FavoriteListActivity extends AppCompatActivity {
         try{
             FileInputStream fis = openFileInput(path);
             byte temp[] = new byte[1024];
-            StringBuilder sb = new StringBuilder("");
+            List<byte[]> byteList = new ArrayList<byte[]>();
             int len = 0;
             while ((len = fis.read(temp)) > 0){
-                sb.append(new String(temp, 0, len));
+                byte tmpByte[] = new byte[len];
+                System.arraycopy(temp, 0, tmpByte, 0, len);
+                byteList.add(tmpByte);
             }
-            String jsonString = sb.toString();
+            fis.close();
+            byte allByte[];
+            int totalLen = 0;
+            for(int i = 0; i < byteList.size(); i++){
+                totalLen += byteList.get(i).length;
+            }
+            allByte = new byte[totalLen];
+            int alreadyCopy = 0;
+            for(int i = 0; i < byteList.size(); i++){
+                System.arraycopy(byteList.get(i), 0, allByte, alreadyCopy, byteList.get(i).length);
+                alreadyCopy += byteList.get(i).length;
+            }
+            String jsonString = new String(allByte, 0, totalLen);
             jsonString = "[" + jsonString.substring(0, jsonString.length()-1) + "]";
             Log.i("json_string", jsonString);
             JSONArray jsonArray = new JSONArray(jsonString);

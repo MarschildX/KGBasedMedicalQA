@@ -119,21 +119,14 @@ class QuestionParser:
         question_entity_type = self.get_question_entity_type(question)
 
         # calculate similarity and judge whether going to the next step
-        if question_entity_type == {}:
+        if question_entity_type == {} and "检查" not in question and "科" not in question:
             candidates = []
             cut_words = jieba.lcut(question)
-            # for i in range(len(question)):
-            #     for j in range(i, len(question)):
-            #         for word in self.words_all:
-            #             distance = Levenshtein.distance(word, question[i:j+1])
-            #             similarity = 1 - float(distance) / float(len(word))
-            #             if similarity >= 0.6:
-            #                 candidates.append(word)
             for cw in cut_words:
                 for word in self.words_all:
                     distance = Levenshtein.distance(word, cw)
                     similarity = 1 - float(distance) / float(len(word))
-                    if similarity >= 0.6:
+                    if similarity >= 0.5:
                         candidates.append(word)
             # if find some candidates, return immediately
             if candidates:

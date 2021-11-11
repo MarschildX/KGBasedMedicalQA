@@ -1,23 +1,23 @@
 package com.example.healworld.common.adapter;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.healworld.FavoriteDetailActivity;
 import com.example.healworld.R;
+import com.example.healworld.utils.AppUtil;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.Random;
 
 public class FavoriteListAdapter extends RecyclerView.Adapter<FavoriteListAdapter.ViewHolder> {
-
-    private String[] localDataSet;
     private int favoriteItemCount;
     private JSONArray jsonArray;
 
@@ -27,16 +27,33 @@ public class FavoriteListAdapter extends RecyclerView.Adapter<FavoriteListAdapte
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
+        private final TextView titleView;
+        private final TextView datetimeView;
+        private final CardView cardView;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
-
             textView = (TextView) view.findViewById(R.id.tv_cardview_favorite_list);
+            titleView = (TextView) view.findViewById(R.id.tv_title_cardview_favorite_list);
+            datetimeView = (TextView) view.findViewById(R.id.tv_datetime_cardview_favorite_list);
+            cardView = (CardView) view.findViewById(R.id.cardview_favorite_list);
         }
 
         public TextView getTextView() {
             return textView;
+        }
+
+        public TextView getTitleView(){
+            return titleView;
+        }
+
+        public TextView getDatetimeView(){
+            return datetimeView;
+        }
+
+        public CardView getCardView(){
+            return cardView;
         }
     }
 
@@ -65,19 +82,32 @@ public class FavoriteListAdapter extends RecyclerView.Adapter<FavoriteListAdapte
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        // 设定textview的高度，应该基于内容长度来定，而且需要固定
-        Random random = new Random();
-        int randomHeight = random.nextInt((500 - 150) + 1) + 150;
-        viewHolder.getTextView().setHeight(randomHeight);
-
-        // Get element from your dataset at this position and replace the
-        // contents of the view with that element
-//        viewHolder.getTextView().setText(localDataSet[position]);
         try {
-            viewHolder.getTextView().setText(jsonArray.getJSONObject(position).getString("text"));
+            String question = jsonArray.getJSONObject(favoriteItemCount-position-1).getString("question");
+            String text = jsonArray.getJSONObject(favoriteItemCount-position-1).getString("text");
+            String datetime = jsonArray.getJSONObject(favoriteItemCount-position-1).getString("datetime");
+            viewHolder.getTitleView().setText(question);
+            viewHolder.getTextView().setText(text);
+            viewHolder.getDatetimeView().setText(datetime);
+            viewHolder.getCardView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        Intent intent = new Intent(view.getContext(), FavoriteDetailActivity.class);
+                        intent.putExtra("question", question);
+                        intent.putExtra("text", text);
+                        intent.putExtra("datetime", datetime);
+                        view.getContext().startActivity(intent);
+                    }
+                    catch(Exception e){
+                        AppUtil.showToast(view.getContext(), "无响应", false);
+                    }
+                }
+            });
         }
         catch(Exception e){
-            viewHolder.getTextView().setText("解析不出数据");
+            viewHolder.getTitleView().setText("解析不出标题");
+            viewHolder.getTextView().setText("解析不出内容");
         }
     }
 
