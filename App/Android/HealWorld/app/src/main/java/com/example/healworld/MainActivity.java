@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -131,6 +132,7 @@ public class MainActivity extends CommonMessageActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message_list_main);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         initMessageList();
         initInputBar();
@@ -355,7 +357,7 @@ public class MainActivity extends CommonMessageActivity
             JSONArray answers = jsonObject.getJSONArray("answers");
             String finalAnswer = "";
             for (int i = 0; i < answers.length(); i++) {
-                finalAnswer = finalAnswer + answers.getString(i) + '\n';
+                finalAnswer = finalAnswer + answers.getString(i) + '\n' + '\n';
             }
             result.put("answer", finalAnswer.trim());
 

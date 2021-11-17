@@ -156,7 +156,7 @@ class MedicalGraph:
     '''create nodes except disease'''
     def create_node(self, label, nodes):
         count = 0
-        for node_name in nodes: #将结点集中的结点设置为
+        for node_name in nodes: 
             node = Node(label, name=node_name)
             self.g.create(node)
             count += 1

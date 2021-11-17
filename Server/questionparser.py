@@ -33,6 +33,7 @@ class QuestionParser:
 
         self.words_all = list(set(self.words_disease + self.words_symptom + self.words_department + self.words_check 
             + self.words_food + self.words_drug + self.words_producer))
+        self.words_similarity = list(set(self.words_disease + self.words_symptom + self.words_drug + self.words_check))
         # the mecical entity Aho-Corasick auto machine
         self.medical_tree = self.construct_actree(self.words_all)
         # the medical word type dictionary
@@ -119,11 +120,11 @@ class QuestionParser:
         question_entity_type = self.get_question_entity_type(question)
 
         # calculate similarity and judge whether going to the next step
-        if question_entity_type == {} and "检查" not in question and "科" not in question:
+        if question_entity_type == {} and "药" not in question  and "检查" not in question and "检验" not in question and "测验" not in question and "化验" not in question and "症状" not in question:
             candidates = []
             cut_words = jieba.lcut(question)
             for cw in cut_words:
-                for word in self.words_all:
+                for word in self.words_similarity:
                     distance = Levenshtein.distance(word, cw)
                     similarity = 1 - float(distance) / float(len(word))
                     if similarity >= 0.5:

@@ -21,7 +21,7 @@ class AnswerBuilder:
                 ans = self.kg.run(query).data()
                 formatting_answer = self.answer_formatter(ques_type, ans)
                 if formatting_answer:
-                    final_answers.append(formatting_answer)
+                    final_answers.append(formatting_answer.strip())
         return final_answers
 
     '''fomatting the answer based on their question type'''
@@ -64,12 +64,12 @@ class AnswerBuilder:
         elif ques_type == mc.DISE_DRUG:
             result = [a['n.name'] for a in answer]
             object = answer[0]['m.name']
-            formatting_answer = '本建议仅供参考，{0}等药品对{1}有治疗作用，具体用药切记遵从医嘱。'.format(
+            formatting_answer = '{0}等药品对{1}有治疗作用。本建议仅供参考，具体用药切记遵从医嘱。'.format(
                  '，'.join(list(set(result))), object)
         elif ques_type == mc.DRUG_DISE:
             result = [a['m.name'] for a in answer]
             object = answer[0]['n.name']
-            formatting_answer = '本建议仅供参考，{0}可以用来治疗{1}等疾病，具体用药切记遵从医嘱。'.format(object, 
+            formatting_answer = '{0}可以用来治疗{1}等疾病。本建议仅供参考，具体用药切记遵从医嘱。'.format(object, 
                 '，'.join(list(set(result)))) 
         elif ques_type == mc.DISE_CUREWAY:
             result = [a['n.name'] for a in answer]

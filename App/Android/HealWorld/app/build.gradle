@@ -15,6 +15,13 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // define the apk name
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "HealtheWorld_v${versionName}.apk"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
