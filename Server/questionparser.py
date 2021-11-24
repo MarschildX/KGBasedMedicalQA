@@ -120,7 +120,7 @@ class QuestionParser:
         question_entity_type = self.get_question_entity_type(question)
 
         # calculate similarity and judge whether going to the next step
-        if question_entity_type == {} and "药" not in question  and "检查" not in question and "检验" not in question and "测验" not in question and "化验" not in question and "症状" not in question:
+        if question_entity_type == {} and "药" not in question  and "检查" not in question and "检验" not in question and "测验" not in question and "化验" not in question and "症状" not in question and "食物" not in question and "吃" not in question:
             candidates = []
             cut_words = jieba.lcut(question)
             for cw in cut_words:
