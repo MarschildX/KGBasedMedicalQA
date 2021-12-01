@@ -86,7 +86,7 @@ class AnswerBuilder:
         elif ques_type == mc.DISE_PREV:
             result = [a['m.prevent'] for a in answer]
             object = answer[0]['m.name']
-            formatting_answer = '{0}的预防措施有：\n{1}。'.format(object, '，'.join(result))
+            formatting_answer = '{0}的预防措施有：\n{1}'.format(object, '，'.join(result))
         elif ques_type == mc.DISE_DURA:
             result = answer[0]['m.cure_lasttime']
             object = answer[0]['m.name']

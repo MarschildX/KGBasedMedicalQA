@@ -31,7 +31,7 @@ class QuestionParser:
         self.words_drug = [entity.strip() for entity in open(self.path_drug) if entity.strip()]
         self.words_producer = [entity.strip() for entity in open(self.path_producer) if entity.strip()]
 
-        self.words_all = list(set(self.words_disease + self.words_symptom + self.words_department + self.words_check 
+        self.words_all = list(set(self.words_disease + self.words_symptom + self.words_check 
             + self.words_food + self.words_drug + self.words_producer))
         self.words_similarity = list(set(self.words_disease + self.words_symptom + self.words_drug + self.words_check))
         # the mecical entity Aho-Corasick auto machine
@@ -194,6 +194,8 @@ class QuestionParser:
         # cure way
         if self.check_words(self.qwds_cureway, question) and mc.DISEASE in types:
             question_types.append(mc.DISE_CUREWAY)
+            question_types.append(mc.DISE_DRUG)
+            question_types.append(mc.DISE_DO_FOOD)
 
         # drug -> disease
         if self.check_words(self.qwds_cure, question) and mc.DRUG in types:

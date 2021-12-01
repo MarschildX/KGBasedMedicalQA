@@ -14,12 +14,16 @@ qa_url = 'http://106.15.90.138:5320/question'
 local_mac_addr = get_mac_address()
 
 while True:
-    question = input("\033[33mquestion: \033[0m")
-    question_json = json.dumps({'mac': local_mac_addr, 'question': question})
-    response = requests.post(url=qa_url, headers=headers, data=question_json)
-    answers = response.json()['answers']
-    print('\033[32manswer:\033[0m')
-    for ans in answers:
-        if ans.strip():
-            print(ans.strip())
+    try:
+        question = input("\033[33mquestion: \033[0m")
+        question_json = json.dumps({'mac': local_mac_addr, 'question': question})
+        response = requests.post(url=qa_url, headers=headers, data=question_json)
+        answers = response.json()['answers']
+        print('\033[32manswer:\033[0m')
+        for ans in answers:
+            if ans.strip():
+                print(ans.strip())
+    except:
+        print('\033[32manswer:\033[0m')
+        print("暂时无法解答你的问题，请向具体医生询问。")
 
