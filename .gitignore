@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# MacOS directory
+.DS_Store
+
+# Local file
+/ServerTest
